@@ -7,9 +7,21 @@ I = imread('lena.bmp');
 I  = double(I);
 
 %% Read watermarked image and convert it to double
-I_w = imread('watermarked.bmp');
+I_w = imread('lena_wat.bmp');
 [dimx,dimy] = size(I_w);
 Iwd = double(I_w); 
+
+%% Attacks
+%Iatt = imnoise(I_w,'gaussian');
+
+%QF = 80; 
+%imwrite(I_w, 'SSatt.jpg', 'Quality', QF);
+%Iatt = imread('SSatt.jpg');
+%delete('SSatt.jpg');
+
+%q = WPSNR(I, uint8(Iatt));
+%fprintf('WPSNR = +%5.2f dB\n',q);
+%imshow(Iatt);
 
 %% Load the watermark (variable w) of size 32x32
 load('iquartz.mat');
@@ -19,8 +31,11 @@ imshow(w);
 w_vec = reshape(w,1,w_x*w_y);
 
 %% Perform DWT
-% watermarked
+% watermarked 
 [cAw, cHw, cVw, cDw] = dwt2(I_w, 'Haar');
+
+%Per controllare quella attaccata: 
+%[cAw, cHw, cVw, cDw] = dwt2(Iatt, 'Haar');
 
 A1imgw = wcodemat(cAw,255,'mat',1);
 H1imgw = wcodemat(cHw,255,'mat',1);
@@ -31,7 +46,7 @@ Level1w = [A1imgw,H1imgw; V1imgw,D1imgw];
 
 % original
 
-[cA, cH, cV, cD] = dwt2(I_w, 'Haar');
+[cA, cH, cV, cD] = dwt2(I, 'Haar');
 
 A1img = wcodemat(cA,255,'mat',1);
 H1img = wcodemat(cH,255,'mat',1);
@@ -69,29 +84,27 @@ for j = 1: w_x*w_y
     k = k+1;
 end
 
+%w_rec = reshape(w_rec, w_x, w_y);
 
-%% Attacks
-%Iatt = imnoise(I_wat,'gaussian');
-%q = WPSNR(I, uint8(Iatt));
-%fprintf('WPSNR = +%5.2f dB\n',q);
 
-%% Detection
-SIM = w .* w_rec' / sqrt( w_rec * w_rec' );
+%% Detection (Matrix multiply -> scalar as output?)
+SIM = w_vec * w_rec' / sqrt( w_rec * w_rec' );
 
 %% Compute threshold
-randWatermarks = round(rand(999,size(w,2)));
+%999 matrici da 32x32? o vettori da 1024?
+randWatermarks = round(rand(999,size(w_vec,2))); 
 x = zeros(1,1000);
  
 x(1) = SIM;  
 for i = 1:999
     w_rand = randWatermarks(i,:);
-    x(i+1) = w * w_rand' / sqrt( w_rand * w_rand' );
+    x(i+1) = w_vec * w_rand' / sqrt( w_rand * w_rand' );
 end
 
 x = abs(x);
 x = sort(x, 'descend');
 t = x(2);
-T = t + 0.1*t
+T = t + 0.1*t;
 
 %% Decision
 if SIM > T
