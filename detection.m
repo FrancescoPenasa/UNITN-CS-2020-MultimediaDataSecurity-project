@@ -78,6 +78,7 @@ w_rec = zeros(1, w_x*w_y);
 k = 2;
 for j = 1: w_x*w_y
     m = Ix(k);
+    %La formula è sbagliata?
     w_rec(j) = ((Itw_mod(m)/It_mod(m)) - 1) / alpha;
     %todo the other way too
 

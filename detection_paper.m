@@ -15,7 +15,7 @@ Iwd = double(I_w);
 
 %% Attacks
 if attack
-    QF = 50;
+    QF = 45;
     imwrite(I_w, 'SSatt.jpg', 'Quality', QF);
     Iatt = imread('SSatt.jpg');
     delete('SSatt.jpg');
@@ -31,6 +31,20 @@ load('iquartz.mat');
 w_vec = reshape(w,1,w_x*w_y);
 
 %% Perform DWT
+% original
+
+[cA, cH, cV, cD] = dwt2(I, 'Haar');
+
+A1img = wcodemat(cA,255,'mat',1);
+H1img = wcodemat(cH,255,'mat',1);
+V1img = wcodemat(cV,255,'mat',1);
+D1img = wcodemat(cD,255,'mat',1);
+
+Level1=[A1img,H1img; V1img,D1img];
+if show_images
+    imshow(uint8([A1img,H1img; V1img,D1img]));
+end
+
 % watermarked
 if attack
     [cAw, cHw, cVw, cDw] = dwt2(Iatt, 'Haar');
@@ -44,50 +58,97 @@ V1imgw = wcodemat(cVw,255,'mat',1);
 D1imgw = wcodemat(cDw,255,'mat',1);
 
 Level1w = [A1imgw,H1imgw; V1imgw,D1imgw];
-
-% original
-
-[cA, cH, cV, cD] = dwt2(I, 'Haar');
-
-A1img = wcodemat(cA,255,'mat',1);
-H1img = wcodemat(cH,255,'mat',1);
-V1img = wcodemat(cV,255,'mat',1);
-D1img = wcodemat(cD,255,'mat',1);
-
-Level1=[A1img,H1img; V1img,D1img];
+if show_images
+    imshow(uint8([A1imgw,H1imgw; V1imgw,D1imgw]));
+end
 
 %% Perform Block-Based APDCBT on horizontal Sub-band
+%on original image
 if on8x8blocks
-    Yw = blkproc(cVw,[8 8],@apdcbt);
-else
+   if dwt_comp == 2
+       Y = blkproc(cV,[8 8],@apdcbt);
+    elseif dwt_comp == 3
+       Y = blkproc(cD,[8 8],@apdcbt);
+   end
+end
+[dimx,dimy] = size(Y);
+Y_vec = reshape(Y,1,dimx*dimy);
+
+% on watermarked image
+if on8x8blocks
+    if dwt_comp == 2
+       Yw = blkproc(cVw,[8 8],@apdcbt);
+    elseif dwt_comp == 3
+       Yw = blkproc(cDw,[8 8],@apdcbt);
+    end
+ else
     [Yw, Vw] = apdcbt(cVw);
 end
 [dimxw,dimyw] = size(Yw);
 Yw_vec = reshape(Yw,1,dimxw*dimyw);
 
-if on8x8blocks
-    Y = blkproc(cV,[8 8],@apdcbt);
-else
-    [Y, V] = apdcbt(cV);
-end
-[dimx,dimy] = size(Y);
-Y_vec = reshape(Y,1,dimx*dimy);
+%% Obtain the DC coefficients matrix M (vector M_vec) ORIGINAL
+blocks_x = dimx/8;
+blocks_y = dimy/8;
 
+M_vec = zeros(1, blocks_x*blocks_y); %32x32 in vector form 1x1024
+mi = 1; 
+if on8x8blocks
+   for i=1:dimx
+       for j=1:dimy
+           if (mod(i,8) == 1) && (mod(j,8) == 1) 
+               M_vec(mi) = Y(i,j);
+               mi = mi+1;
+           end
+       end
+   end
+end
+
+%% Obtain the DC coefficients matrix Mw (vector Mw_vec) from watermarked image
+blocks_x = dimx/8;
+blocks_y = dimy/8;
+
+Mw_vec = zeros(1, blocks_x*blocks_y); %32x32 in vector form 1x1024
+mi = 1; 
+if on8x8blocks
+   for i=1:dimx
+       for j=1:dimy
+           if (mod(i,8) == 1) && (mod(j,8) == 1) 
+               Mw_vec(mi) = Yw(i,j);
+               mi = mi+1;
+           end
+       end
+   end
+end
+
+
+%% Extract watermark
+w_rec = zeros(1, w_x*w_y);
+for j = 1: w_x*w_y
+   % Itw_mod(m) = It_mod(m) + (alpha*w_vec(j));
+    w_rec(j) = (Mw_vec(j) - M_vec(j))/alpha;
+end
+
+
+%% OLD CODE (works without DC coefficients)
 %% Coefficient selection (hint: use sign, abs and sort functions)
-Y_sgn = sign(Y_vec);
-Y_mod = abs(Y_vec);
-Yw_mod = abs(Yw_vec);
-[Y_sort,Y_index] = sort(Y_mod,'descend');
+%Y_sgn = sign(Y_vec);
+%Y_mod = abs(Y_vec);
+%Yw_mod = abs(Yw_vec);
+%[Y_sort,Y_index] = sort(Y_mod,'descend');
 
 %% Extraction
-w_rec = zeros(1, w_x*w_y);
-k = 2;
-for j = 1: w_x*w_y
-    m = Y_index(k);
-    w_rec(j) = round(((Yw_mod(m)/Y_mod(m)) - 1) / alpha);
+%w_rec = zeros(1, w_x*w_y);
+%k = 2;
+%for j = 1: w_x*w_y
+%    m = Y_index(k);
+%    w_rec(j) = round(((Yw_mod(m)/Y_mod(m)) - 1) / alpha);
     %todo the other way too
-    k = k+1;
-end
+%    k = k+1;
+%end
+
+
+%% CONTINUATION
 
 %% Detection (Matrix multiply -> scalar as output?)
 SIM = w_vec * w_rec' / sqrt( w_rec * w_rec' );

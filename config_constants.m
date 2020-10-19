@@ -4,9 +4,14 @@
 on8x8blocks = true;
 % In the detection: perform attacks on the watermarked image
 attack = true;
-show_images = false;
+show_images = true;
 if on8x8blocks
-    alpha = 0.9;
+    alpha = 30;
 else
     alpha = 1.7
 end
+
+%chose DWT component
+%dwt_comp = 1; %Top Left, horizontal
+%dwt_comp = 2; %Bottom Right, vertical
+dwt_comp = 3; %Bottom Left, diagonal
