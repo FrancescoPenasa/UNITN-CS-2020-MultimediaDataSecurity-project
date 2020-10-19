@@ -1,4 +1,7 @@
 tmp/
-.log
-.tmp
-.bak
+*.log
+*.tmp
+*.bak
+
+# MATLAB autosave files
+*.asv

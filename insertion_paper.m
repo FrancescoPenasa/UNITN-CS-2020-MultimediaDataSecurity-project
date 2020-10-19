@@ -1,8 +1,9 @@
 close all; clear; clc;
 
+config_constants;
+
 %% Read original image and convert it to double
 I = imread('lena.bmp');
-% [dimx,dimy] = size(I);
 Id = double(I); % TODO: needed?
 
 %% Load the watermark (variable w) of size 32x32
@@ -22,31 +23,19 @@ Level1=[A1img,H1img; V1img,D1img];
 % imshow(uint8([A1img,H1img; V1img,D1img]));
 
 %% Perform Block-Based APDCBT on HL Sub-band
-[Y, V] = apdcbt(cV); % Decide what sub-band to use
-
-%subplot(1,2,1);
-%imshow(log(abs(Y)),[]);
-%colormap(gca,jet(64));
-%colorbar;
-%subplot(1,2,2);
-%imshow(log(abs(V)),[]);
-%colormap(gca,jet(64));
-%colorbar;
+if on8x8blocks
+    Y = blkproc(cV,[8 8],@apdcbt);
+else
+    [Y, V] = apdcbt(cV); % Decide what sub-band to use
+end
 
 [dimx,dimy] = size(Y);
-%imshow(log(abs(cH_dct)),[]);
-%colormap(gca,jet(64));
-%colorbar;
 
 %% SVD TODO: riscrivere bene
-[YU, YS, YV] = svd(Y);
-% Y = YS;
-
+%[YU, YS, YV] = svd(Y);
+YS = Y;
 %Reshape the Y coefficient into a vector
 Y_vec = reshape(YS, 1, dimx*dimy);
-
-%% Watermark
-alpha = 1.7;
 
 %% Coefficient selection (hint: use sign, abs and sort functions)
 Y_sgn = sign(Y_vec);
@@ -69,11 +58,15 @@ Y_new = Yw_mod.*Y_sgn;
 Y_new = reshape(Y_new,dimx,dimy);
 
 % Inverse SVD
-[YUw, YSw, YVw] = svd(Y_new);
-Y_new = YUw*YSw*YVw';
+%[YUw, YSw, YVw] = svd(Y_new);
+%Y_new = YUw*YSw*YVw';
 
 % Invert
-cV_wat = iapdcbt(Y_new);
+if on8x8blocks
+    cV_wat = blkproc(Y_new,[8 8],@iapdcbt);
+else
+    cV_wat = iapdcbt(Y_new);
+end
 
 V1img_wat = wcodemat(cV_wat,255,'mat',1);
 
@@ -86,12 +79,15 @@ fprintf('Images (original-watermarked) WPSNR = +%5.2f dB\n',q);
 q = PSNR(I, I_wat);
 fprintf('Images (original-watermarked) PSNR = +%5.2f dB\n',q);
 
-% suptitle('Original Image(Left)and Watermarked DWT-DCT(Right)');
-subplot(1,2,1);
-%imshow(uint8([A1img,H1img; V1img,D1img]));
-imshow(I);
-subplot(1,2,2);
-%imshow(uint8([A1img,H1img; V1img_wat,D1img]));
-imshow(I_wat);
+if show_images
+    % suptitle('Original Image(Left)and Watermarked DWT-DCT(Right)');
+    subplot(1,2,1);
+    imshow(uint8([A1img,H1img; V1img,D1img]));
+    imshow(I);
+    subplot(1,2,2);
+    imshow(uint8([A1img,H1img; V1img_wat,D1img]));
+    imshow(I_wat);
+end
 
 imwrite(I_wat,"lena_iquartz.bmp");
+
