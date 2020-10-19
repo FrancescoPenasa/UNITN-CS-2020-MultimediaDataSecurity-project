@@ -1,4 +1,4 @@
-function Iatt = test_resize(Iw, nPower)
+function Iatt = resize_tunable(Iw, nPower)
 
 n = size(Iw);
 Iw = double(Iw);
