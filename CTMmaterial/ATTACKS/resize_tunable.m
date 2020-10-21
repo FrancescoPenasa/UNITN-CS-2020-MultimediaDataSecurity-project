@@ -1,5 +1,5 @@
-function Iatt = resize_tunable(Iw, nPower)
-
+function [Iatt, string] = resize_tunable(Iw, nPower)
+string = strcat("Resize: scale ", num2str(nPower), "; ");
 n = size(Iw);
 Iw = double(Iw);
 Iatt = imresize(Iw, nPower);

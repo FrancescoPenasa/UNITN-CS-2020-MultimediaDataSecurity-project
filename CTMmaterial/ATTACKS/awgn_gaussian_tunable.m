@@ -1,7 +1,7 @@
 
-function Iatt = awgn_gaussian_tunable(Iw, mean, noisePower, seed)
+function [Iatt, string] = awgn_gaussian_tunable(Iw, mean, variance, seed)
 
 rng(seed); % Seed random generator
-
-Iatt = imnoise(Iw,'gaussian', mean, noisePower); %0, 0.01 default
+string = strcat("AWGN: Gaussian, mean=", num2str(mean), " variance=", num2str(variance), " seed=", num2str(seed), "; ");
+Iatt = imnoise(Iw,'gaussian', mean, variance); %0, 0.01 default
 
