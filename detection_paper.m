@@ -26,7 +26,7 @@ end
 
 %% Load the watermark (variable w) of size 32x32
 load('iquartz.mat');
-
+ 
 [w_x, w_y] = size(w);
 w_vec = reshape(w,1,w_x*w_y);
 
@@ -104,6 +104,21 @@ if on8x8blocks
    end
 end
 
+if svd_insertion
+% Obtain SVD Matrix of original DC coefficients
+    % M to matrix representation
+    M_rec = reshape(M_vec, blocks_x, blocks_y);
+    % DC coefficient matrix has transposed values after reshape
+    M_rec = M_rec';
+    
+    [MU_rec, MS_rec, MV_rec] = svd(M_rec);
+    
+    [MUs_rec, MSs_rec, MVs_rec] = svd(MS_rec);
+    
+    MS_rec_star = MUs_rec*MS_rec*MVs_rec';
+    
+end
+
 %% Obtain the DC coefficients matrix Mw (vector Mw_vec) from watermarked image
 blocks_x = dimx/8;
 blocks_y = dimy/8;
@@ -121,12 +136,44 @@ if on8x8blocks
    end
 end
 
+if svd_insertion
+    % Obtain SVD Matrix of watermarked/attacked DC coefficients
+     % Mw to matrix representation
+    Mw_rec = reshape(Mw_vec, blocks_x, blocks_y);
+    % DC coefficient matrix has transposed values after reshape
+    Mw_rec = Mw_rec';
+    
+    [MUw_rec, MSw_rec, MVw_rec] = svd(Mw_rec);
+    
+    [Uw, Sw, Vw] = svd(MSw_rec); 
+    
+    MSw_rec_star =  Uw*MSw_rec*Vw;
+end
+
 
 %% Extract watermark
+% I want final watermark to be in vectorial form
 w_rec = zeros(1, w_x*w_y);
-for j = 1: w_x*w_y
-   % Itw_mod(m) = It_mod(m) + (alpha*w_vec(j));
-    w_rec(j) = (Mw_vec(j) - M_vec(j))/alpha;
+if svd_insertion
+    %extract from MSw - MS matrix
+    w_svd = (MSw_rec_star - MS_rec_star)/alpha;
+    WT = 0.5;
+    for i=1:32
+        for j=1:32
+            if w_svd(i,j) >= WT
+                w_svd(i,j) = 1;
+            else
+                w_svd(i,j) = 0;
+            end
+        end
+    end
+    w_rec = reshape(w_svd,1,w_x*w_y);
+else
+    %extract directly from DC matrix
+    for j = 1: w_x*w_y
+       % Itw_mod(m) = It_mod(m) + (alpha*w_vec(j));
+        w_rec(j) = (Mw_vec(j) - M_vec(j))/alpha;
+    end
 end
 
 

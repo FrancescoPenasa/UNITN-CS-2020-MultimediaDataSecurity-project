@@ -71,9 +71,11 @@ if svd_insertion
     M = M';
 
     [MU, MS, MV] = svd(M);
+    
     MSw = MS + alpha*w;
+    
     [MUw, MSw, MVw] = svd(MSw);
-    Mw = MU*MSw*MVw';
+    Mw = MU*MSw*MV';
 
 else
 
