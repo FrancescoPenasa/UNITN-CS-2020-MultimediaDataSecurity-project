@@ -21,7 +21,7 @@ if attack
     delete('SSatt.jpg');
 
     q = WPSNR(I, uint8(Iatt));
-    fprintf('Images (original-watermarked) WPSNR = +%5.2f dB\n',q);
+    fprintf('Images (original-attacked) WPSNR = +%5.2f dB\n',q);
 end
 
 %% Load the watermark (variable w) of size 32x32

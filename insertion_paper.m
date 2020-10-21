@@ -27,7 +27,7 @@ D1img = wcodemat(cD,255,'mat',1);
 Level1=[A1img,H1img; V1img,D1img];
 %imshow(uint8([A1img,H1img; V1img,D1img]));
 
-%% Perform Block-Based APDCBT on HL Sub-band
+%% Perform Block-Based APDCBT on a high pass Sub-band
 if on8x8blocks
     if dwt_comp == 2
        Y = blkproc(cV,[8 8],@apdcbt);
@@ -39,13 +39,18 @@ else
 end
 
 [dimx,dimy] = size(Y);
+if show_images
+    imshow(log(abs(Y)),[]);
+    colormap(gca,jet(64));
+    colorbar;
+end
 
 %% Obtain the DC coefficients matrix M (vector M_vec)
 blocks_x = dimx/8;
 blocks_y = dimy/8;
 
 M_vec = zeros(1, blocks_x*blocks_y); %32x32 in vector form 1x1024
-mi = 1; 
+mi = 1;
 if on8x8blocks
    for i=1:dimx
        for j=1:dimy
@@ -57,17 +62,34 @@ if on8x8blocks
    end
 end
 
-%% Insert watermark
 
-Mw_vec = M_vec;
-for i=1:w_x*w_y
-    Mw_vec(i) = M_vec(i) + alpha*w_vec(i);
+%% SVD of M + wat + 
+if svd_insertion
+    % to matrix representation
+    M = reshape(M_vec, blocks_x, blocks_y);
+    % DC coefficient matrix has transposed values after reshape
+    M = M';
+
+    [MU, MS, MV] = svd(M);
+    MSw = MS + alpha*w;
+    [MUw, MSw, MVw] = svd(MSw);
+    Mw = MU*MSw*MVw';
+
+else
+
+    %% Insert watermark
+
+    Mw_vec = M_vec;
+    for i=1:w_x*w_y
+        Mw_vec(i) = M_vec(i) + alpha*w_vec(i);
+    end
+
+    Mw = reshape(Mw_vec, blocks_x, blocks_y);
+    %for some reason, DC coefficient matrix has transposed values
+    %after reshape
+    Mw = Mw';
+
 end
-
-Mw = reshape(Mw_vec, blocks_x, blocks_y);
-% for some reason, DC coefficient matrix has transposed values
-% after reshape
-Mw = Mw';
 
 %% Insert watermarked coefficients back in Y
 Y_new = Y;
