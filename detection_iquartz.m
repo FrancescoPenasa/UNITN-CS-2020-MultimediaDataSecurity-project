@@ -132,7 +132,7 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
     SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
 
     % Decide if our Watermark is contained in the Attacked image
-    if SIM > T
+    if SIM >= T
         contains = 1;
     else
         contains = 0;
