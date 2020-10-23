@@ -18,7 +18,7 @@ detections = {dir(detections_dir).name};
 
 
 groups_list_file = "groupsList.txt";
-output_file = "attack_results.csv";
+output_file = "demo/attack_results.csv";
 groups= importdata(groups_list_file);
 results_csv = ["Image","Group","w", "WPSNR","Attack Parameters"];
 
@@ -37,7 +37,7 @@ for i = 1:length(watermarked)
     
     % read watermarked image "groupName_nameImage.bmp"
     Iw = imread(strcat(watermarked_dir, "/", watermarked(i)));
-    Iw = double(Iw);
+
     
     % find original image "nameImage.bmp"
     groupName = split(watermarked(i), '_');
@@ -45,7 +45,6 @@ for i = 1:length(watermarked)
     groupName = groupName(1);
     
     I = imread(strcat(originals_dir, "/", original));
-    I = double(I);
         
     % check detection = check the dir for detection_iquartz
     detection_function = strcat("detection_", groupName, "");
@@ -65,9 +64,9 @@ for i = 1:length(watermarked)
         
         % Check result
         
-        imwrite(Iatt,"attacked.bmp");
-        imwrite(Iw,"watermarked.bmp");
-        imwrite(I,"original.bmp");
+        imwrite(uint8(Iatt),"attacked.bmp");
+        imwrite(uint8(Iw),"watermarked.bmp");
+        imwrite(uint8(I),"original.bmp");
         [contains, wpsnr_value] = detection_iquartz("original.bmp", "watermarked.bmp", "attacked.bmp");
         if (contains == 1)
             disp("FAIL: " + atk + " on " + watermarked(i))
