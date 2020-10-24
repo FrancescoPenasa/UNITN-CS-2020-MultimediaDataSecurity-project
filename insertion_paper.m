@@ -8,6 +8,7 @@ Id = double(I); % TODO: needed?
 
 %% Load the watermark (variable w) of size 32x32
 load('iquartz.mat');
+w = rescale(w, -1,1);
 
 %Try random watermarks
 %randWatermark = round(rand(1,1024)); 
@@ -74,8 +75,9 @@ if svd_insertion
     
     MSw = MS + alpha*w;
     
-    [MUw, MSw, MVw] = svd(MSw);
-    Mw = MU*MSw*MV';
+    [MUw, MSw1, MVw] = svd(MSw);
+    
+    Mw = MU * MSw * MV';
 
 else
 
@@ -84,6 +86,7 @@ else
     Mw_vec = M_vec;
     for i=1:w_x*w_y
         Mw_vec(i) = M_vec(i) + alpha*w_vec(i);
+        %Mw_vec(i) = M_vec(i)*(1 + alpha*w_vec(i));
     end
 
     Mw = reshape(Mw_vec, blocks_x, blocks_y);
@@ -164,6 +167,10 @@ if dwt_comp == 2
 elseif dwt_comp == 3
     I_wat = uint8(idwt2(cA, cH, cV, cD_wat, 'Haar'));
 end 
+
+
+D1img_wat = wcodemat(cD_wat,255,'mat',1);
+imshow(uint8([A1img,H1img; V1img,D1img_wat]));
 
 q = WPSNR(I, I_wat);
 fprintf('Images (original-watermarked) WPSNR = +%5.2f dB\n',q);

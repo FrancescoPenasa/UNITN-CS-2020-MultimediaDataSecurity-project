@@ -1,5 +1,6 @@
 close all; clear; clc;
 
+%% DETECTION FOR SIMPLE DWT + DCT Spread Spectrum
 % todo add original image stuff
 
 %% Read original image and convert it to double

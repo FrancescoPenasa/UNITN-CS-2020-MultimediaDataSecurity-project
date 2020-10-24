@@ -3,7 +3,7 @@ clear all; clc;
 
 addpath('ATTACKS', 'WPSNR', 'TESTImages');
 imName='lena';
-groupname='groupName';
+groupname='iquartz';
 ext = 'bmp';
 
 original = sprintf('%s.%s', imName, ext);
@@ -11,7 +11,7 @@ watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
 
 %% RUNNING TIME <5s
 dCPUStartTime = cputime;
-[tr, cWPSNR] = detection_groupName(original, watermarked, watermarked);
+[tr, cWPSNR] = detection_iquartz(original, watermarked, watermarked);
 dElapsed = cputime - dCPUStartTime;
 if dElapsed > 5
     disp('ERROR! Takes too much to run')

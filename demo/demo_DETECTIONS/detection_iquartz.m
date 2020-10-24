@@ -111,6 +111,10 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
         for j = 1: W_SIZE*W_SIZE
            % Itw_mod(m) = It_mod(m) + (ALPHA*w_vec(j));
             w(j) = round((Mw_vec(j) - M_vec(j))/ALPHA);
+             % The watermarked inserted was -1/+1
+            if w(j) < 0 
+                w(j) = 0;
+            end
         end
         watermark = reshape(w, W_SIZE, W_SIZE);
     end % extract_watermark
@@ -120,34 +124,44 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
     I_wat   = imread(watermarked,'bmp');
     I_att   = imread(attacked,'bmp');
 
-    % Extract Watermarks
-    watermark          = extract_watermark(I, I_wat);
-    watermark_attacked = extract_watermark(I, I_att);
+     % Calculate the WPSNR between the Watermarked and the Attacked Image
+    wpsnr_value = WPSNR(I_w, I_att);
+    
+    if wpsnr_value < 35  % return 0
+        
+        contains = 0;  
+        
+    else % perform the computations
+        
+        % Extract Watermarks
+        watermark          = extract_watermark(I, I_wat);
+        watermark_attacked = extract_watermark(I, I_att);
 
-    % Reshape Watermarks
-    w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
-    w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
+        % Reshape Watermarks
+        w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
+        w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
 
-    % Calculate Similarity between the Original and the Attacked Watermarks
-    SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
+        % Calculate Similarity between the Original and the Attacked Watermarks
+        SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
 
-    % Decide if our Watermark is contained in the Attacked image
-    if SIM > T
-        contains = 1;
-    else
-        contains = 0;
+        % Decide if our Watermark is contained in the Attacked image
+        if SIM > T
+            contains = 1;
+        else
+            contains = 0;
+        end
+
+        % Calculate the WPSNR between the Watermarked and the Attacked Image
+        wpsnr_value = WPSNR(I_wat, I_att);
+
+        % TODO: remove this, for testing purposes only
+        if SIM > T
+            fprintf('Mark has been found. \nSIM = %f\n', SIM);
+        else
+            fprintf('Mark has been lost. \nSIM = %f\n', SIM);
+        end
+        fprintf('Watermarks WPSNR = +%5.2f dB\n', wpsnr_value);
+        % Remove up to here
+        
     end
-
-    % Calculate the WPSNR between the Watermarked and the Attacked Image
-    wpsnr_value = WPSNR(I_wat, I_att);
-
-    % TODO: remove this, for testing purposes only
-    if SIM > T
-        fprintf('Mark has been found. \nSIM = %f\n', SIM);
-    else
-        fprintf('Mark has been lost. \nSIM = %f\n', SIM);
-    end
-    fprintf('Watermarks WPSNR = +%5.2f dB\n', wpsnr_value);
-    % Remove up to here
-
 end

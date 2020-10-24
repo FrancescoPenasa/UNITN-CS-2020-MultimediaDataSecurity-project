@@ -1,5 +1,5 @@
 close all; clear; clc;
-
+%% SIMPL SPREAD SPECTRUM DWT+DCT INSERTION
 %% Read original image and convert it to double
 I = imread('lena.bmp');
 [dimx,dimy] = size(I);
@@ -27,6 +27,7 @@ imshow(uint8([A1img,H1img; V1img,D1img]));
 
 cH_dct = dct2(cH);
 [dimx,dimy] = size(cH_dct);
+
 %imshow(log(abs(cH_dct)),[]);
 %colormap(gca,jet(64));
 %colorbar;
