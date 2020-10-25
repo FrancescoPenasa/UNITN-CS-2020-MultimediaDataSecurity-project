@@ -1,15 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multimedia Data Security
+% UNITN 2020/21
+% Detection function of group iquartz
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, attacked) 
 
-    ON_BLOCKS       = true;
     DWT_L2          = true;
-
-    if ON_BLOCKS
-        ALPHA   = 1;
-    else
-        ALPHA   = 1.7;
-    end
-    W_SIZE = 32;
-    RESCALE_W = false;
+    ALPHA           = 0.7;
+    W_SIZE          = 32;
+    RESCALE_W       = false;
 
     T = 13.3329;
 
@@ -54,13 +54,13 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         % Perform DWT
         % Original , Level 1
         [cA, cH, cV, cD] = dwt2(I, 'Haar');
-		if DWT_L2 	%level 2
+		if DWT_L2 	% level 2
 			[cA2, cH2, cV2, cD2] = dwt2(cA, 'Haar');
 		end
 		
         % Watermarked
         [cAw, cHw, cVw, cDw] = dwt2(I_w, 'Haar');
-		if DWT_L2 	%level 2
+		if DWT_L2 	% level 2
 			[cA2w, cH2w, cV2w, cD2w] = dwt2(cAw, 'Haar');
 		end
 		
@@ -104,13 +104,9 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		for j = 1: W_SIZE*W_SIZE
             m = Yh_index(j);
 			% additive
-            w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
+            % w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
-			% if the watermarked inserted was -1/+1, fix: 
-            %if w(j) < 0 
-            %    w(j) = 0;
-            %end
+			w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
 		end
 		
         % extract identical watermark from vertical component
@@ -125,13 +121,9 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		for j = 1:  W_SIZE*W_SIZE
             m = Yv_index(j);
 			% additive
-            w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
+            % w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
-			% if the watermarked inserted was -1/+1, fix: 
-            %if w(j) < 0 
-            %    w(j) = 0;
-            %end
+			w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
 		end
 		
 		% Average the two watermarks
@@ -140,6 +132,7 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         else
             threshold = 0.5;
         end
+        
 		w = zeros(1, W_SIZE*W_SIZE);
         for j = 1:  W_SIZE*W_SIZE
 			val = (w1(j) + w2(j))/2;
@@ -159,26 +152,23 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
     I_wat   = imread(watermarked);
     I_att   = imread(attacked);
     
-    disp("Detecting watermark in: " + original);
+    % disp("Detecting watermark in: " + original);
     
     % Calculate the WPSNR between the Watermarked and the Attacked Image
     wpsnr_value = WPSNR(I_wat, I_att);
     
-    if wpsnr_value < 35  % return 0
-        
+    % image is too ruined, return contains = 0
+    if wpsnr_value < 35  
+      
         contains = 0;  
-        disp("Image is too ruined!");
+       % disp("Image is too ruined!");
+       
     else % perform the computations
     
         % Extract Watermarks
         watermark          = extract_watermark(I, I_wat);
         watermark_attacked = extract_watermark(I, I_att);
-        
-        subplot(1,2,1);
-        imshow(watermark);
-        subplot(1,2,2);
-        imshow(watermark_attacked);
-        
+              
         % Reshape Watermarks
         w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
         w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
@@ -186,29 +176,14 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         % Calculate Similarity between the Original and the Attacked Watermarks
         SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
 		
-        %SIM = watermark * watermark_attacked' / sqrt (watermark_attacked * watermark_attacked');
-
         % Decide if our Watermark is contained in the Attacked image
         if SIM >= T
             contains = 1;
         else
             contains = 0;
         end
-
-        % TODO: remove this, for testing purposes only
-        if SIM >= T
-            fprintf('Mark has been found. \nSIM = %f\n', SIM);
-        else
-            fprintf('Mark has been lost. \nSIM = %f\n', SIM);
-        end
-        % Calculate the WPSNR between the Watermarked and the Attacked Image
-        wpsnr_value = WPSNR(I_wat, I_att);
-        fprintf('WPSNR watermarked - attacked = +%5.2f dB\n', wpsnr_value);
-        % Remove up to here
         
-        if wpsnr_value < 35  % return 0
-            contains = 0;  
-        end
+        %fprintf('WPSNR watermarked - attacked = +%5.2f dB\n', wpsnr_value);
         
     end
 

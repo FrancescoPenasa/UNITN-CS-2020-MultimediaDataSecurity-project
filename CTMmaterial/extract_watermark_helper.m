@@ -23,12 +23,12 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
 		end
 		
         % Perform Block-Based APDCBT on horizontal and vertical sub-bands
-        % Original
-		
+        
+        % Original		
         if DWT_L2 	% if l2 embedding, process H and V comp of level 2
 			Yh = blkproc(cH2,[8 8],@apdcbt);
             Yv = blkproc(cV2,[8 8],@apdcbt);
-        else 	% H and V comp of level 1
+        else        % H and V comp of level 1
 			Yh = blkproc(cH,[8 8],@apdcbt);
             Yv = blkproc(cV,[8 8],@apdcbt);
         end
@@ -38,7 +38,7 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
         if DWT_L2 	% if l2 embedding, process H and V comp of level 2
 			Yh_w = blkproc(cH2w,[8 8],@apdcbt);
             Yv_w = blkproc(cV2w,[8 8],@apdcbt);
-        else 	% H and V comp of level 1
+        else        % H and V comp of level 1
 			Yh_w = blkproc(cHw,[8 8],@apdcbt);
             Yv_w = blkproc(cVw,[8 8],@apdcbt);
         end
@@ -60,15 +60,13 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
 		Yh_w_mod = abs(Yh_w_vec);
 		
 		for j = 1: W_SIZE*W_SIZE
+            
 		    m = Yh_index(j);
 			% additive
-		    w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
+		    %w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
-			% if the watermarked inserted was -1/+1, fix: 
-            %if w(j) < 0 
-            %    w(j) = 0;
-            %end
+			w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
+            
 		end
 		
         % extract identical watermark from vertical component
@@ -81,15 +79,13 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
 		Yv_w_mod = abs(Yv_w_vec);
 		
 		for j = 1:  W_SIZE*W_SIZE
+            
 		    m = Yv_index(j);
 			% additive
-		    w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
+		    %w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
-			% if the watermarked inserted was -1/+1, fix: 
-            %if w(j) < 0 
-            %    w(j) = 0;
-            %end
+			w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
+            
 		end
 		
 		% Average the two watermarks

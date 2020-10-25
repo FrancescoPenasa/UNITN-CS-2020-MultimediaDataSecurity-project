@@ -9,8 +9,8 @@ ext = 'bmp';
 imagesAttacked='Images_attacked/'; 
 
 original = sprintf('%s.%s', imName, ext);
-%watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
-watermarked =  sprintf('%s_%s.%s', groupname, imName, ext);
+watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
+%watermarked =  sprintf('%s_%s.%s', groupname, imName, ext);
 
 %% RUNNING TIME <5s
 dCPUStartTime = cputime;
@@ -25,7 +25,6 @@ if tr==0
     disp('ERROR! Watermark not found in watermarked image');
 end
 
-
 %% MUST NOT BE FOUND IN ORIGINAL
 [tr, cWPSNR] = new_detection_iquartz(original, watermarked, original);
 if tr==1
@@ -35,7 +34,6 @@ end
 
 %% CHECK DESTROYED IMAGES
 Im1 = imread(watermarked);
-Im1a = test_awgn(Im1, 0.1, 123);
 
 Im1a = awgn_gaussian_mid(Im1);
 %Im1a = awgn_speckle_low(Im1);
@@ -55,12 +53,13 @@ imwrite(Im1a, path);
 fprintf("WPSNR " + cWPSNR);
 
 %% CHECK UNRELATED
-myFiles = dir(fullfile('TESTImages','*.bmp'));
+myFiles = dir(fullfile('Images_original','*.bmp'));
 for k = 1:length(myFiles)
 	baseFileName = myFiles(k).name;
-	fullFileName = fullfile('TESTImages', baseFileName);
+	fullFileName = fullfile('Images_original', baseFileName);
     [tr, cWPSNR] = new_detection_iquartz(original, watermarked, fullFileName);
     if tr==1
     	fprintf('ERROR! Watermark found with in %s\n', baseFileName);
     end
+    disp("Wpsnr " + cWPSNR);
 end

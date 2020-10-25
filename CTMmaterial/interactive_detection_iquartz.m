@@ -1,13 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multimedia Data Security
+% UNITN 2020/21
+% Detection and threshold computation of group iquartz
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 close all; clear; clc;
 
-new_config_constants; 
+configuration; 
 
 % todo add original image stuff
 % TODO: uniformare la naming convention (w o _wat) tra qua e insertion
 
 % Load Images
-original = 'casa'; 
-watermarked = 'casa_iquartz';
+original = 'lena'; 
+watermarked = 'lena_iquartz';
 attacked = 'lena_attacked';
 
 I       = imread(original,'bmp');
@@ -15,17 +21,17 @@ I_wat   = imread(watermarked,'bmp');
 I_att = I_wat;
 %I_att   = imread(attacked,'bmp');
 
-disp("Detecting watermark in: " + original);
 
 % Extract Watermarks as 32x32 images
 watermark          = extract_watermark_helper(I, I_wat, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
 watermark_attacked = extract_watermark_helper(I, I_att, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
 
-subplot(1,2,1);
-imshow(watermark);
-subplot(1,2,2);
-imshow(watermark_attacked);
-
+if SHOW_IMAGES
+    subplot(1,2,1);
+    imshow(watermark);
+    subplot(1,2,2);
+    imshow(watermark_attacked);
+end
 % Reshape Watermarks
 w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
 w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
@@ -44,7 +50,7 @@ x = zeros(1,1000);
 x(1) = SIM;  
 for i = 1:999
     w_rand = randWatermarks(i,:);
-    x(i+1) = w_vec * w_rand' / sqrt( w_rand * w_rand' );
+    x(i+1) = w_att_vec * w_rand' / sqrt( w_rand * w_rand' );
 end
 
 plot(x)
