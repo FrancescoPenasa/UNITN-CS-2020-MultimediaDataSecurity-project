@@ -5,7 +5,7 @@
 % The two watermarks are averaged.
 
 % Returns a 32 x 32 watermark
-function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE,ALPHA)
+function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RESCALE_W)
         I   = double(I);
         I_w = double(I_w);
 
@@ -93,10 +93,16 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE,ALPHA)
 		end
 		
 		% Average the two watermarks
+        if RESCALE_W
+            threshold = 0;
+        else
+            threshold = 0.5;
+        end
+        
 		w = zeros(1, W_SIZE*W_SIZE);
 		for j = 1:  W_SIZE*W_SIZE
             val = (w1(j) + w2(j))/2;
-            if val > 0.5
+            if val > threshold
                 w(j) = 1;
             else
                 w(j) = 0;
