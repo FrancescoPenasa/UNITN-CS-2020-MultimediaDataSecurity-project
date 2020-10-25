@@ -1,0 +1,22 @@
+Image,Group,w,WPSNR,Attack Parameters
+iquartz_lena.bmp,iquartz,1,45.4268,blur_high
+iquartz_lena.bmp,iquartz,1,9999999,blur_low
+iquartz_lena.bmp,iquartz,1,57.0676,blur_mid
+iquartz_lena.bmp,iquartz,1,40.4529,jpeg_10
+iquartz_lena.bmp,iquartz,1,45.3072,jpeg_20
+iquartz_lena.bmp,iquartz,1,48.233,jpeg_30
+iquartz_lena.bmp,iquartz,1,50.1618,jpeg_40
+iquartz_lena.bmp,iquartz,1,51.8279,jpeg_50
+iquartz_lena.bmp,iquartz,1,53.4104,jpeg_60
+iquartz_lena.bmp,iquartz,1,55.6929,jpeg_70
+iquartz_lena.bmp,iquartz,1,58.8399,jpeg_80
+iquartz_lena.bmp,iquartz,1,64.3326,jpeg_90
+iquartz_lena.bmp,iquartz,1,68.9206,jpeg_95
+iquartz_lena.bmp,iquartz,1,57.2929,median_high
+iquartz_lena.bmp,iquartz,0,41.8653,median_low
+iquartz_lena.bmp,iquartz,1,49.933,median_mid
+iquartz_lena.bmp,iquartz,1,50.7592,resize_high
+iquartz_lena.bmp,iquartz,1,66.2585,resize_low
+iquartz_lena.bmp,iquartz,1,61.4639,resize_mid
+iquartz_lena.bmp,iquartz,1,60.9326,sharpening_high
+iquartz_lena.bmp,iquartz,1,48.2991,sharpening_mid
