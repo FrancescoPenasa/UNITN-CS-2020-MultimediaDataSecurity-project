@@ -17,8 +17,8 @@ function [Y_new] = embed(Y, w, alpha)
 
     for j = 1: WAT_SIZE*WAT_SIZE
         m = Y_index(j);
-        Yw_mod(m) = Y_mod(m)*(1+alpha*w(j));
-        %Yw_mod(m) = Y_mod(m)+alpha*w(j);
+        %Yw_mod(m) = Y_mod(m)*(1+alpha*w(j));
+        Yw_mod(m) = Y_mod(m)+alpha*w(j);
     end
 
     Y_new_vec = Yw_mod.*Y_sgn;

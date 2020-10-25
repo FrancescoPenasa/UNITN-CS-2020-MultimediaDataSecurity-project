@@ -1,4 +1,4 @@
-function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, attacked) 
+function [contains, wpsnr_value] = detection_iquartz(original, watermarked, attacked) 
    
     ON_BLOCKS       = true;
     DWT_L2          = true;
@@ -136,7 +136,12 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		% Average the two watermarks
 		w = zeros(1, W_SIZE*W_SIZE);
 		for j = 1:  W_SIZE*W_SIZE
-			w(j) = round((w1(j) + w2(j))/2);
+			w(j) = (w1(j) + w2(j))/2;
+            if val > 0.5
+                w(j) = 1;
+            else
+                w(j) = 0;
+            end
         end
 	    
         watermark = reshape(w, W_SIZE, W_SIZE);

@@ -1,6 +1,6 @@
 
 function Iatt = blur_low(Iw)
 
-Iatt = imgaussfilt(Iw, 0.1);
+Iatt = imgaussfilt(Iw, 0.25);
 
 

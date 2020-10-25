@@ -29,6 +29,7 @@ results_csv = ["Image","Group","w", "WPSNR","Attack Parameters"];
 
 results_csv = ["Image","Group","w", "WPSNR","Attack Parameters"];
 
+% for every image in demo/WAT
 for i = 1:length(watermarked)
     if (watermarked(i) == ".") || (watermarked(i) == "..") 
         continue;
@@ -37,7 +38,6 @@ for i = 1:length(watermarked)
     
     % read watermarked image "groupName_nameImage.bmp"
     Iw = imread(strcat(watermarked_dir, "/", watermarked(i)));
-
     
     % find original image "nameImage.bmp"
     groupName = split(watermarked(i), '_');
@@ -49,7 +49,8 @@ for i = 1:length(watermarked)
     % check detection = check the dir for detection_iquartz
     detection_function = strcat("detection_", groupName, "");
     detection_fh = str2func(detection_function);
-    
+   
+    % for all available attacks
     for j = 1:length(attacks)
         if (attacks(j) == ".") || (attacks(j) == "..")
             continue;
@@ -62,8 +63,7 @@ for i = 1:length(watermarked)
         atk_fh = str2func(atk);
         Iatt = atk_fh(Iw);
         
-        % Check result
-        
+        % Check result        
         imwrite(uint8(Iatt),"attacked.bmp");
         imwrite(uint8(Iw),"watermarked.bmp");
         imwrite(uint8(I),"original.bmp");
@@ -75,6 +75,9 @@ for i = 1:length(watermarked)
             if (wpsnr_value >= 35)
                 disp("SUPER SUCCESS: " + atk + " on " + watermarked(i))
                 fprintf('Watermarks WPSNR = +%5.2f dB\n',wpsnr_value);
+                
+                % new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
+                % results_csv = [results_csv; new_csv];
             end
         end
         

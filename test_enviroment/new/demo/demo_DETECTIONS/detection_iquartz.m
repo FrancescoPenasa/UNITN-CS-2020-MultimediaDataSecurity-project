@@ -136,7 +136,12 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
 		% Average the two watermarks
 		w = zeros(1, W_SIZE*W_SIZE);
 		for j = 1:  W_SIZE*W_SIZE
-			w(j) = round((w1(j) + w2(j))/2);
+			val = (w1(j) + w2(j))/2;            
+            if val > 0.5
+                w(j) = 1;
+            else
+                w(j) = 0;
+            end
         end
 	    
         watermark = reshape(w, W_SIZE, W_SIZE);
