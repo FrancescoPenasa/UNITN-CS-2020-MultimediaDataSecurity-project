@@ -2,12 +2,15 @@
 clear all; clc;
 
 addpath('ATTACKS', 'WPSNR', 'Images_original', 'Images_watermarked');
+
 imName='lena';
 groupname='iquartz';
 ext = 'bmp';
+imagesAttacked='Images_attacked/'; 
 
 original = sprintf('%s.%s', imName, ext);
-watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
+%watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
+watermarked =  sprintf('%s_%s.%s', groupname, imName, ext);
 
 %% RUNNING TIME <5s
 dCPUStartTime = cputime;
@@ -33,13 +36,23 @@ end
 %% CHECK DESTROYED IMAGES
 Im1 = imread(watermarked);
 Im1a = test_awgn(Im1, 0.1, 123);
-imwrite(Im1a, 'attacked.bmp')
 
-[tr, cWPSNR] = new_detection_iquartz(original, watermarked, 'lena_attacked.bmp');
-if tr==1
-    fprintf('ERROR! Watermark found with WPSNR = %f\n', cWPSNR);
-end
+Im1a = awgn_gaussian_mid(Im1);
+%Im1a = awgn_speckle_low(Im1);
+%Im1a = blur_high(Im1);
+%Im1a = jpeg_20(Im1);
+%Im1a = median_mid(Im1);
+%Im1a = resize_mid(Im1);
+%Im1a = sharpening_mid(Im1);
 
+imshow(Im1a);
+
+path = sprintf("%s%s_%s", imagesAttacked, imName, "_attacked_gaus.bmp");
+imwrite(Im1a, path);
+
+[tr, cWPSNR] = new_detection_iquartz(original, watermarked, path);
+
+fprintf("WPSNR " + cWPSNR);
 
 %% CHECK UNRELATED
 myFiles = dir(fullfile('TESTImages','*.bmp'));
