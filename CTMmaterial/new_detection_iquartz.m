@@ -1,5 +1,5 @@
 function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, attacked) 
-   
+
     ON_BLOCKS       = true;
     DWT_L2          = true;
 
@@ -9,7 +9,8 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         ALPHA   = 1.7;
     end
     W_SIZE = 32;
-    
+    RESCALE_W = false;
+
     T = 13.3329;
 
     function [Y, V] = apdcbt(X)
@@ -90,7 +91,7 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         
 		w1 = zeros(1, W_SIZE * W_SIZE);
 		w2 = zeros(1, W_SIZE * W_SIZE);
-	    
+
 		% extract one watermark from horizontal component
 		Yh_vec = reshape(Yh, 1, dimx*dimy);
 		Yh_sgn = sign(Yh_vec);
@@ -101,9 +102,9 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		Yh_w_mod = abs(Yh_w_vec);
 		
 		for j = 1: W_SIZE*W_SIZE
-		    m = Yh_index(j);
+            m = Yh_index(j);
 			% additive
-		    w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
+            w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
 			% multiplicative 
 			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
@@ -122,9 +123,9 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		Yv_w_mod = abs(Yv_w_vec);
 		
 		for j = 1:  W_SIZE*W_SIZE
-		    m = Yv_index(j);
+            m = Yv_index(j);
 			% additive
-		    w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
+            w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
 			% multiplicative 
 			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
@@ -134,18 +135,23 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		end
 		
 		% Average the two watermarks
+        if RESCALE_W
+            threshold = 0;
+        else
+            threshold = 0.5;
+        end
 		w = zeros(1, W_SIZE*W_SIZE);
-		for j = 1:  W_SIZE*W_SIZE
+        for j = 1:  W_SIZE*W_SIZE
 			val = (w1(j) + w2(j))/2;
-            if val > 0.5
+            if val > threshold
                 w(j) = 1;
             else
                 w(j) = 0;
             end
         end
-	    
+
         watermark = reshape(w, W_SIZE, W_SIZE);
-        		
+
     end % extract_watermark
 
     % Load Images
@@ -195,7 +201,7 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
         else
             fprintf('Mark has been lost. \nSIM = %f\n', SIM);
         end
-         % Calculate the WPSNR between the Watermarked and the Attacked Image
+        % Calculate the WPSNR between the Watermarked and the Attacked Image
         wpsnr_value = WPSNR(I_wat, I_att);
         fprintf('WPSNR watermarked - attacked = +%5.2f dB\n', wpsnr_value);
         % Remove up to here

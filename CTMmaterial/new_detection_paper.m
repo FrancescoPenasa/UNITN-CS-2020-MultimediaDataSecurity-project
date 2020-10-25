@@ -5,11 +5,11 @@ new_config_constants;
 % todo add original image stuff
 % TODO: uniformare la naming convention (w o _wat) tra qua e insertion
 
- % Load Images
-original = 'bici'; 
-watermarked = 'bici_iquartz';
+% Load Images
+original = 'casa'; 
+watermarked = 'casa_iquartz';
 attacked = 'lena_attacked';
- 
+
 I       = imread(original,'bmp');
 I_wat   = imread(watermarked,'bmp');
 I_att = I_wat;
@@ -18,8 +18,8 @@ I_att = I_wat;
 disp("Detecting watermark in: " + original);
 
 % Extract Watermarks as 32x32 images
-watermark          = extract_watermark_helper(I, I_wat, DWT_L2, W_SIZE, ALPHA);
-watermark_attacked = extract_watermark_helper(I, I_att, DWT_L2, W_SIZE, ALPHA);
+watermark          = extract_watermark_helper(I, I_wat, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
+watermark_attacked = extract_watermark_helper(I, I_att, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
 
 subplot(1,2,1);
 imshow(watermark);
@@ -40,7 +40,7 @@ SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
 %999 matrici da 32x32? o vettori da 1024?
 randWatermarks = round(rand(999,size(w_vec,2))); 
 x = zeros(1,1000);
- 
+
 x(1) = SIM;  
 for i = 1:999
     w_rand = randWatermarks(i,:);

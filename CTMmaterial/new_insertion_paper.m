@@ -4,15 +4,17 @@ new_config_constants;
 
 img_name = "casa.bmp";
 wat_name = "casa_iquartz.bmp";
-wat_folder = "Images_watermarked\";
+wat_folder = "Images_watermarked/";
 %% Read original image and the watermark
 
 I = imread(img_name);
 I = double(I);
 load('iquartz.mat');    %to variable w
-%w = rescale(w, -1,1);
 imshow(w);
 w_vec = reshape(w, 1, W_SIZE * W_SIZE);
+if RESCALE_W
+    w_vec = rescale(w_vec, -1, 1);
+end
 
 %Try random watermarks
 %randWatermark = round(rand(1,1024)); 
