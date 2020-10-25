@@ -1,7 +1,7 @@
 %% INITIALIZATION
 clear all; clc;
 
-addpath('ATTACKS', 'WPSNR', 'TESTImages');
+addpath('ATTACKS', 'WPSNR', 'Images_original', 'Images_watermarked');
 imName='lena';
 groupname='iquartz';
 ext = 'bmp';

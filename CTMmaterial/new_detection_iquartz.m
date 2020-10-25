@@ -105,7 +105,7 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 			% additive
 		    w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
+			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
             %if w(j) < 0 
             %    w(j) = 0;
@@ -126,7 +126,7 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 			% additive
 		    w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
+			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
             %if w(j) < 0 
             %    w(j) = 0;
@@ -136,7 +136,12 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
 		% Average the two watermarks
 		w = zeros(1, W_SIZE*W_SIZE);
 		for j = 1:  W_SIZE*W_SIZE
-			w(j) = round((w1(j) + w2(j))/2);
+			val = (w1(j) + w2(j))/2;
+            if val > 0.5
+                w(j) = 1;
+            else
+                w(j) = 0;
+            end
         end
 	    
         watermark = reshape(w, W_SIZE, W_SIZE);

@@ -2,9 +2,9 @@ close all; clear; clc;
 
 new_config_constants;
 
-img_name = "capo.bmp";
-wat_name = "capo_iquartz.bmp";
-
+img_name = "casa.bmp";
+wat_name = "casa_iquartz.bmp";
+wat_folder = "Images_watermarked\";
 %% Read original image and the watermark
 
 I = imread(img_name);
@@ -138,7 +138,7 @@ end
 %imshow(I_wat);
 
 
-imwrite(I_wat,wat_name);
+imwrite(I_wat,wat_folder + wat_name);
 
 
 

@@ -6,9 +6,10 @@ new_config_constants;
 % TODO: uniformare la naming convention (w o _wat) tra qua e insertion
 
  % Load Images
- original = 'lena'; 
- watermarked = 'lena_iquartz';
- attacked = 'lena_attacked';
+original = 'bici'; 
+watermarked = 'bici_iquartz';
+attacked = 'lena_attacked';
+ 
 I       = imread(original,'bmp');
 I_wat   = imread(watermarked,'bmp');
 I_att = I_wat;
