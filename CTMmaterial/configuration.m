@@ -5,4 +5,4 @@ DWT_L2          =   true
 W_SIZE          =   32
 RESCALE_W       =   false
 
-ALPHA = 0.7;
+ALPHA = 0.9

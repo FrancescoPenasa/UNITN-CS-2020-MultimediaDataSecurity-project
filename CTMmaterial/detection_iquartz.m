@@ -4,10 +4,10 @@
 % Detection function of group iquartz
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, attacked) 
+function [contains, wpsnr_value] = detection_iquartz(original, watermarked, attacked) 
 
     DWT_L2          = true;
-    ALPHA           = 0.7;
+    ALPHA           = 0.9;
     W_SIZE          = 32;
     RESCALE_W       = false;
 
@@ -153,38 +153,30 @@ function [contains, wpsnr_value] = new_detection_iquartz(original, watermarked, 
     I_att   = imread(attacked);
     
     % disp("Detecting watermark in: " + original);
+     
+    % Extract Watermarks
+    watermark          = extract_watermark(I, I_wat);
+    watermark_attacked = extract_watermark(I, I_att);
     
+    
+    % Reshape Watermarks
+    w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
+    w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
+
+    % Calculate Similarity between the Original and the Attacked Watermarks
+    SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
+
+    % Decide if our Watermark is contained in the Attacked image
+    if SIM >= T
+        contains = 1;
+    else
+        contains = 0;
+    end
+
     % Calculate the WPSNR between the Watermarked and the Attacked Image
     wpsnr_value = WPSNR(I_wat, I_att);
-    
-    % image is too ruined, return contains = 0
-    if wpsnr_value < 35  
-      
-        contains = 0;  
-       % disp("Image is too ruined!");
-       
-    else % perform the computations
-    
-        % Extract Watermarks
-        watermark          = extract_watermark(I, I_wat);
-        watermark_attacked = extract_watermark(I, I_att);
-              
-        % Reshape Watermarks
-        w_vec     = reshape(watermark, 1, W_SIZE*W_SIZE);
-        w_att_vec = reshape(watermark_attacked, 1, W_SIZE*W_SIZE);
-
-        % Calculate Similarity between the Original and the Attacked Watermarks
-        SIM = w_vec * w_att_vec' / sqrt(w_att_vec * w_att_vec');
-		
-        % Decide if our Watermark is contained in the Attacked image
-        if SIM >= T
-            contains = 1;
-        else
-            contains = 0;
-        end
+    %fprintf('WPSNR watermarked - attacked = +%5.2f dB\n', wpsnr_value);
         
-        %fprintf('WPSNR watermarked - attacked = +%5.2f dB\n', wpsnr_value);
-        
-    end
+    
 
 end

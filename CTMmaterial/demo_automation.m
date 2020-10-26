@@ -78,7 +78,7 @@ for i = 1:length(watermarked)
             disp("SUCCESS: " + atk + " on " + watermarked(i))
             if (wpsnr_value >= 35)
                 disp("SUPER SUCCESS: " + atk + " on " + watermarked(i))
-                fprintf('Watermarks WPSNR = +%5.2f dB\n',wpsnr_value);
+                fprintf(' watermark - attacked WPSNR = +%5.2f dB\n',wpsnr_value);
                 
                 % new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
                 % results_csv = [results_csv; new_csv];
