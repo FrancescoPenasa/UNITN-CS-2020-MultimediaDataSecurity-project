@@ -50,7 +50,7 @@ for i = 1:length(watermarked)
     I = imread(strcat(originals_dir, "/", original));
         
     % check detection = check the dir for detection_iquartz
-    detection_function = strcat("new_detection_", groupName, "");
+    detection_function = strcat("detection_", groupName, "");
     detection_fh = str2func(detection_function);
    
     % for all available attacks
@@ -67,11 +67,11 @@ for i = 1:length(watermarked)
         Iatt = atk_fh(Iw);
         
         % Check result    
-        attackedName = attacked_dir + "iquartz_" + groupName + "_" + original;
+        attackedName = attacked_dir + "iquartz_" + groupName + "_" + original + "_" + atk + ".bmp";
         imwrite(uint8(Iatt),attackedName);
         imwrite(uint8(Iw),"watermarked.bmp");
         imwrite(uint8(I),"original.bmp");
-        [contains, wpsnr_value] = new_detection_iquartz("original.bmp", "watermarked.bmp", attackedName);
+        [contains, wpsnr_value] = detection_iquartz("original.bmp", "watermarked.bmp", attackedName);
         if (contains == 1)
             disp("FAIL: " + atk + " on " + watermarked(i))
         else
