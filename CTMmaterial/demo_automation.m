@@ -55,7 +55,7 @@ for i = 1:length(watermarked)
    
     % for all available attacks
     for j = 1:length(attacks)
-        if (attacks(j) == ".") || (attacks(j) == "..")
+        if ((attacks(j) == ".") || (attacks(j) == "..") || (attacks(j) == "localized_attack.m"))
             continue;
         end
         atk = strcat("", attacks(j), "");
