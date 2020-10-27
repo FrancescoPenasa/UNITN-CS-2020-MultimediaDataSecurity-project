@@ -3,14 +3,16 @@ clear all; clc;
 
 addpath('ATTACKS', 'WPSNR', 'Images_original', 'Images_watermarked');
 
+%% == MODIFY THIS PARAMETERS WITH THE CORRECT ONES
 imName='lena';
 groupname='iquartz';
 ext = 'bmp';
 imagesAttacked='Images_attacked/'; 
 
 original = sprintf('%s.%s', imName, ext);
-watermarked = sprintf('%s_%s.%s', imName, groupname, ext);
-%watermarked =  sprintf('%s_%s.%s', groupname, imName, ext);
+%% == CHECK WHICH ONE OF THIS == %%
+%watermarked = sprintf('%s_%s.%s', imName, groupname, ext); % TO CHECK OUR GROUP
+watermarked =  sprintf('%s_%s.%s', groupname, imName, ext); % TO CHECK OTHER GROUP
 
 %% RUNNING TIME <5s
 dCPUStartTime = cputime;
@@ -18,6 +20,7 @@ dCPUStartTime = cputime;
 % detection function and assign them after you extracted them
 %[tr, cWPSNR, w, wa] = detection_iquartz(original, watermarked, watermarked);
 
+%% == MODIFY WITH THE CORRECT DETECTION FUNCTION == %%
 [tr, cWPSNR] = detection_iquartz(original, watermarked, watermarked);
 dElapsed = cputime - dCPUStartTime;
 if dElapsed > 5
@@ -43,15 +46,19 @@ end
 
 
 %% CHECK DESTROYED IMAGES
-Im1 = imread(watermarked);
+Iw = imread(watermarked);
 
-%Im1a = awgn_gaussian_mid(Im1);
-%Im1a = awgn_speckle_high(Im1);
-%Im1a = blur_mid(Im1);
-%Im1a = jpeg_20(Im1);
-%Im1a = median_high(Im1);
-%Im1a = resize_low(Im1);
-Im1a = sharpening_high(Im1);
+%% == use the attacks that you want to try == %%
+%Im1a = awgn_gaussian_tunable(Iw, mean, variance, seed)
+%Im1a = imnoise(Iw,'poisson');
+%Im1a = awgn_sap_tunable(Iw, noisePower, seed)
+%Im1a = awgn_speckle_tunable(Iw, noisePower, seed)
+%Im1a = median_tunable(Iw,na,nb)
+%Im1a = resize_tunable(Iw, nPower)
+Im1a = jpeg_tunable(Iw, 70)
+
+%Im1a = blur_tunable(Iw, noisePower)
+%Im1a = sharpening_tunable(Iw, nRad, nPower, thr);
 
 imshow(Im1a);
 
@@ -68,7 +75,7 @@ myFiles = dir(fullfile('Images_original','*.bmp'));
 for k = 1:length(myFiles)
 	baseFileName = myFiles(k).name;
 	fullFileName = fullfile('Images_original', baseFileName);
-    [tr, cWPSNR] = new_detection_iquartz(original, watermarked, fullFileName);
+    [tr, cWPSNR] = detection_iquartz(original, watermarked, fullFileName);
     if tr==1
     	fprintf('ERROR! Watermark found with in %s\n', baseFileName);
     end

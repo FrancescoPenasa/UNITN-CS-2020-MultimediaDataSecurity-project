@@ -16,13 +16,11 @@ originals_dir = "Images_original";
 originals = {dir(originals_dir).name};
 
 % list all detections functions
-detections_dir = "demo/demo_DETECTIONS";
+detections_dir = "detection_functions";
 detections = {dir(detections_dir).name};
 
 
-%groups_list_file = "groupsList.txt";
 output_file = "demo/attack_results.csv";
-%groups= importdata(groups_list_file);
 results_csv = ["Image","Group","w", "WPSNR","Attack Parameters"];
 
 % iquartz_groupB_imageName.bmp attacked
@@ -68,10 +66,10 @@ for i = 1:length(watermarked)
         
         % Check result    
         attackedName = attacked_dir + "iquartz_" + groupName + "_" + original + "_" + atk + ".bmp";
-        imwrite(uint8(Iatt),attackedName);
+        imwrite(uint8(Iatt),"attacked.bmp");
         imwrite(uint8(Iw),"watermarked.bmp");
         imwrite(uint8(I),"original.bmp");
-        [contains, wpsnr_value] = detection_iquartz("original.bmp", "watermarked.bmp", attackedName);
+        [contains, wpsnr_value] = detection_fh("original.bmp", "watermarked.bmp", "attacked.bmp");
         if (contains == 1)
             disp("FAIL: " + atk + " on " + watermarked(i))
         else
@@ -80,17 +78,18 @@ for i = 1:length(watermarked)
                 disp("SUPER SUCCESS: " + atk + " on " + watermarked(i))
                 fprintf(' watermark - attacked WPSNR = +%5.2f dB\n',wpsnr_value);
                 
-                % new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
-                % results_csv = [results_csv; new_csv];
+                imwrite(uint8(Iatt),attackedName);
+                new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
+                results_csv = [results_csv; new_csv];
             end
         end
         
-        new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
-        results_csv = [results_csv; new_csv];
+        %new_csv = [watermarked(i), groupName, contains, wpsnr_value, atk];
+        %results_csv = [results_csv; new_csv];
 
     end
     
 end
 
 writematrix(results_csv, output_file);
-
+disp("FINISHED!")
