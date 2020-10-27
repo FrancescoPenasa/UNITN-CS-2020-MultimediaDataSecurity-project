@@ -6,9 +6,9 @@ on8x8blocks = true;
 attack = false;
 show_images = true;
 if on8x8blocks
-    alpha = 50;
+    ALPHA = 50;
 else
-    alpha = 1.7
+    ALPHA = 1.7
 end
 
 %chose DWT component

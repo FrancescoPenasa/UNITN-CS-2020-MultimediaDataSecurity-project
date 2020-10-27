@@ -105,7 +105,7 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
 			% additive
 		    w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
+			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
             %if w(j) < 0 
             %    w(j) = 0;
@@ -126,7 +126,7 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
 			% additive
 		    w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
 			% multiplicative 
-			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (alpha*Y_h_mod(m));
+			%w1(j) = round((Yh_w_mod(m) - Y_h_mod(m)) / (ALPHA*Y_h_mod(m));
 			% if the watermarked inserted was -1/+1, fix: 
             %if w(j) < 0 
             %    w(j) = 0;

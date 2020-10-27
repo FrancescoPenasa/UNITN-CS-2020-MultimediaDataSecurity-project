@@ -5,7 +5,7 @@
 % The two watermarks are averaged.
 
 % Returns a 32 x 32 watermark
-function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RESCALE_W)
+function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RESCALE_W, ADDITIVE)
         I   = double(I);
         I_w = double(I_w);
 
@@ -62,11 +62,11 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
 		for j = 1: W_SIZE*W_SIZE
             
 		    m = Yh_index(j);
-			% additive
-		    %w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
-			% multiplicative 
-			w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
-            
+            if ADDITIVE
+				w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
+			else
+				w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
+            end            
 		end
 		
         % extract identical watermark from vertical component
@@ -80,12 +80,12 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
 		
 		for j = 1:  W_SIZE*W_SIZE
             
-		    m = Yv_index(j);
-			% additive
-		    %w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
-			% multiplicative 
-			w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
-            
+			m = Yv_index(j);
+            if ADDITIVE
+				w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
+			else
+				w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
+            end
 		end
 		
 		% Average the two watermarks
@@ -104,7 +104,7 @@ function watermark = extract_watermark_helper(I, I_w, DWT_L2, W_SIZE, ALPHA, RES
                 w(j) = 0;
             end
         end
-	    
+
         watermark = reshape(w, W_SIZE, W_SIZE);
-        		
+
     end % extract_watermark

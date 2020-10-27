@@ -71,8 +71,8 @@ end
 [dimx, dimy] = size(Yh); %size is the same for both subbands
 
 %% Embedding (works on 1st, 2nd, 3rd level without modification)
-Yh_new = embed(Yh, w_vec, ALPHA);
-Yv_new = embed(Yv, w_vec, ALPHA);
+Yh_new = embed(Yh, w_vec, ALPHA, ADDITIVE);
+Yv_new = embed(Yv, w_vec, ALPHA, ADDITIVE);
 
 if SHOW_IMAGES
     % show original transforms

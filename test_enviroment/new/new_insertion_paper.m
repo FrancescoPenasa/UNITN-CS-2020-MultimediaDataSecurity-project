@@ -53,8 +53,8 @@ end
 [dimx, dimy] = size(Yh); %size is the same for both subbands
 
 %% Embedding (doesn't care if its 1st,2nd,3rd level)
-Yh_new = embed(Yh, w_vec, ALPHA);
-Yv_new = embed(Yv, w_vec, ALPHA);
+Yh_new = embed(Yh, w_vec, ALPHA, ADDITIVE);
+Yv_new = embed(Yv, w_vec, ALPHA, ADDITIVE);
 
 
 subplot(2,2,1);

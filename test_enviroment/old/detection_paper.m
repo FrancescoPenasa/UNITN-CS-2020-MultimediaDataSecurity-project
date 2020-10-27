@@ -160,7 +160,7 @@ w_rec = zeros(1, w_x*w_y);
 
 if svd_insertion
     %extract from MSw - MS matrix
-    w_svd = (MSw_rec - MS_orig)/alpha;
+    w_svd = (MSw_rec - MS_orig)/ALPHA;
     WT = 0.5; 
     for i=1:32
         for j=1:32
@@ -175,10 +175,10 @@ if svd_insertion
 else
     %extract directly from DC matrix
     for j = 1: w_x*w_y
-       % Itw_mod(m) = It_mod(m) + (alpha*w_vec(j));
-        w_rec(j) = round((Mw_vec(j) - M_vec(j))/alpha);
+       % Itw_mod(m) = It_mod(m) + (ALPHA*w_vec(j));
+        w_rec(j) = round((Mw_vec(j) - M_vec(j))/ALPHA);
         
-       % w_rec(j) = (Mw_vec(j) - M_vec(j))/ (alpha*M_vec(j));
+       % w_rec(j) = (Mw_vec(j) - M_vec(j))/ (ALPHA*M_vec(j));
         % The watermarked inserted was -1/+1
         if w_rec(j) < 0 
             w_rec(j) = 0;
@@ -199,7 +199,7 @@ end
 %k = 2;
 %for j = 1: w_x*w_y
 %    m = Y_index(k);
-%    w_rec(j) = round(((Yw_mod(m)/Y_mod(m)) - 1) / alpha);
+%    w_rec(j) = round(((Yw_mod(m)/Y_mod(m)) - 1) / ALPHA);
     %todo the other way too
 %    k = k+1;
 %end

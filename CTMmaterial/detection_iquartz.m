@@ -10,6 +10,7 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
     ALPHA           = 0.9;
     W_SIZE          = 32;
     RESCALE_W       = false;
+    ADDITIVE        = false;
 
     T = 13.3329;
 
@@ -103,10 +104,12 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
 		
 		for j = 1: W_SIZE*W_SIZE
             m = Yh_index(j);
-			% additive
-            % w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
-			% multiplicative 
-			w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
+
+            if ADDITIVE
+                w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / ALPHA;
+			else
+                w1(j) = (Yh_w_mod(m) - Yh_mod(m)) / (ALPHA*Yh_mod(m));
+            end
 		end
 		
         % extract identical watermark from vertical component
@@ -120,10 +123,12 @@ function [contains, wpsnr_value] = detection_iquartz(original, watermarked, atta
 		
 		for j = 1:  W_SIZE*W_SIZE
             m = Yv_index(j);
-			% additive
-            % w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
-			% multiplicative 
-			w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
+			
+            if ADDITIVE
+                w2(j) =(Yv_w_mod(m) - Yv_mod(m)) / ALPHA;
+			else
+                w2(j) = (Yv_w_mod(m) - Yv_mod(m)) / (ALPHA*Yv_mod(m));
+            end
 		end
 		
 		% Average the two watermarks

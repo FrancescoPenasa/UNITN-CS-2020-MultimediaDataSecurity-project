@@ -2,7 +2,7 @@
 % and the watermark in a vectorial form, and returns a new matrix Y with the 
 % watermark embedded into the 1024 highest coefficients
 
-function [Y_new] = embed(Y, w, alpha)
+function [Y_new] = embed(Y, w, ALPHA, ADDITIVE)
     % Sort the coefficients in Yh and Yv, to insert the watermark in
     % both subbands for robustness 
     [dimx, dimy] = size(Y); %size is the same for both subbands
@@ -17,8 +17,11 @@ function [Y_new] = embed(Y, w, alpha)
 
     for j = 1: WAT_SIZE*WAT_SIZE
         m = Y_index(j);
-        %Yw_mod(m) = Y_mod(m)*(1+alpha*w(j));
-        Yw_mod(m) = Y_mod(m)+alpha*w(j);
+        if ADDITIVE
+            Yw_mod(m) = Y_mod(m)+ALPHA*w(j);
+        else
+            Yw_mod(m) = Y_mod(m)*(1+ALPHA*w(j));
+        end
     end
 
     Y_new_vec = Yw_mod.*Y_sgn;

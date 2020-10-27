@@ -73,7 +73,7 @@ if svd_insertion
 
     [MU, MS, MV] = svd(M);
     
-    MSw = MS + alpha*w;
+    MSw = MS + ALPHA*w;
     
     [MUw, MSw1, MVw] = svd(MSw);
     
@@ -85,8 +85,8 @@ else
 
     Mw_vec = M_vec;
     for i=1:w_x*w_y
-        Mw_vec(i) = M_vec(i) + alpha*w_vec(i);
-        %Mw_vec(i) = M_vec(i)*(1 + alpha*w_vec(i));
+        Mw_vec(i) = M_vec(i) + ALPHA*w_vec(i);
+        %Mw_vec(i) = M_vec(i)*(1 + ALPHA*w_vec(i));
     end
 
     Mw = reshape(Mw_vec, blocks_x, blocks_y);
@@ -130,8 +130,8 @@ end
 %k = 2;
 %for j = 1: w_x*w_y
 %    m = Y_index(k);
-%    Yw_mod(m) = Y_mod(m)*(1+alpha*w(j));
-    %Itw_mod(m) = It_mod(m) + (alpha*w_vec(j));
+%    Yw_mod(m) = Y_mod(m)*(1+ALPHA*w(j));
+    %Itw_mod(m) = It_mod(m) + (ALPHA*w_vec(j));
 %    k = k+1;
 %end
 

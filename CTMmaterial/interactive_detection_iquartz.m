@@ -23,8 +23,8 @@ I_att = I_wat;
 
 
 % Extract Watermarks as 32x32 images
-watermark          = extract_watermark_helper(I, I_wat, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
-watermark_attacked = extract_watermark_helper(I, I_att, DWT_L2, W_SIZE, ALPHA, RESCALE_W);
+watermark          = extract_watermark_helper(I, I_wat, DWT_L2, W_SIZE, ALPHA, RESCALE_W, ADDITIVE);
+watermark_attacked = extract_watermark_helper(I, I_att, DWT_L2, W_SIZE, ALPHA, RESCALE_W, ADDITIVE);
 
 if SHOW_IMAGES
     subplot(1,2,1);
